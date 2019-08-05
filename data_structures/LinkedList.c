@@ -31,6 +31,10 @@ int append(Node * head, int data)
 
 Node* reverse(Node * list)
 {
+	if(!list)
+	{
+		return list;
+	}
 	Node * cur, * next, *temp;
 	cur = list;
 	next = cur->next;
@@ -48,8 +52,25 @@ Node* reverse(Node * list)
 	return newlist;
 }
 
+Node* reverse_recursive(Node * list)
+{
+	if(list == NULL || list->next == NULL)
+	{
+	    return list;
+	}
+	Node * temp = list->next;
+	Node * newlist = reverse_recursive(temp);
+	temp->next = list;
+	list->next = NULL;
+	return newlist;
+}
+
 int print(Node * head)
 {
+	if(!head)
+	{
+	    printf("Empty List");
+	}
 	while(head)
 	{
 		printf("%d;", head->data);
@@ -70,5 +91,7 @@ int main(int argc, char *argv[])
 	print(list);
 	Node * newlist = reverse(list);
 	print(newlist);
+	Node * newlist_r = reverse_recursive(newlist);
+	print(newlist_r);
     return 0;
 }
