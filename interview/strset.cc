@@ -1,4 +1,9 @@
+/* 用一个字符串给定两个字符集合，用@分隔，
+ * @前为全量字符集，@后为已占用字符集，
+ * 要求输出剩余可用字符集
+ */
 #include <map>
+#include <vector>
 #include <iostream>
 #include <string>
 #include <algorithm>
@@ -7,60 +12,100 @@
 
 using namespace std;
 
+void ans(string);
+
 int main(int argc, char *argv[])
 {
-	map<char, int> all;
-	map<char, int> part;
+	string input0 = "";
+	string input1 = "a:1000,baby:6,car:4,d:5@a:1,baby:2,car:4";
+	string input2 = "test:233@";
+	string input3 = "@";
+	string input4 = "a:3,b:5,c:2@a:1,b:2";
 
-	string input = "a:2,b:6,c:4@a:1,b:2";
-	auto at_sign = find(input.begin(), input.end(), '@');
-	string strall, strpart;
-	copy(input.begin(), at_sign, back_inserter(strall));
-	copy(at_sign+1, input.end(), back_inserter(strpart));
+	std::cout << "0: ------------------------------" << std::endl;
+	ans(input0);
+	std::cout << "1: ------------------------------" << std::endl;
+	ans(input1);
+	std::cout << "2: ------------------------------" << std::endl;
+	ans(input2);
+	std::cout << "3: ------------------------------" << std::endl;
+	ans(input3);
+	std::cout << "4: ------------------------------" << std::endl;
+	ans(input4);
 
-	int pos = 0;
-	while(pos + 3 <= strall.size())
+    return 0;
+}
+
+void ans(string input)
+{
+	if(input.size() == 0 || input == "@")
 	{
-		all.emplace(strall[pos], strall[pos+2]);
-		pos += 4;
+		std::cout << "" << std::endl;
+		return;
 	}
-	pos = 0;
-	while(pos + 3 <= strall.size())
-	{
-		part.emplace(strpart[pos], strpart[pos+2]);
-		pos += 4;
-	}
+	map<string, int> result;
+	string temp1, temp2;
 
-	string result;
-	for(auto s : all)
+	auto start = input.begin();
+	int mode = 0;
+	while(start != input.end())
 	{
-		if(part.find(s.first) != part.end())
+		if(*start == '@')
 		{
-			auto b = (*(part.find(s.first))).second;
-			int c = s.second - b;
-			if(c == 0)
-			{}
+			result.emplace(temp1, stoi(temp2));
+			temp1.clear(); temp2.clear();
+			mode = 0; // 换为字符模式
+			start++; continue;
+		}
+		if(*start == ':')
+		{
+			mode = 1; // 换为数字模式
+			start++; continue;
+		}
+		if(*start == ',')
+		{
+			auto temp1inresult = result.find(temp1);
+			if(temp1inresult != result.end())
+			{
+				(*temp1inresult).second -= stoi(temp2);
+			}
 			else
 			{
-			result += s.first;
-			result += ':';
-			result += to_string(c);
-			result += ',';
+				result.emplace(temp1, stoi(temp2));
 			}
+			temp1.clear(); temp2.clear();
+			mode = 0; // 换为字符模式
+			start++; continue;
+		}
+		if(mode == 0) // 字符
+		{
+			temp1 += *start;
+			start++; continue;
+		}
+		if(mode == 1) // 数字
+		{
+			temp2 += *start;
+			start++; continue;
+		}
+	}
+	if(!temp1.empty())
+	{
+		auto temp1inresult = result.find(temp1);
+		if(temp1inresult != result.end())
+		{
+			(*temp1inresult).second -= stoi(temp2);
 		}
 		else
 		{
-			result += s.first;
-			result += ':';
-			result += s.second;
-			result += ',';
+			result.emplace(temp1, stoi(temp2));
 		}
 	}
-	if(!result.empty())
+	auto s = result.begin();
+	for(; s != --result.end(); s++)
 	{
-		result.pop_back();
+		if(s->second != 0)
+			std::cout << s->first << ":" << s->second << ",";
 	}
-	std::cout << result << std::endl;
-
-    return 0;
+	if(s->second != 0)
+		std::cout << s->first << ":" << s->second << std::endl;
 }
