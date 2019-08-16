@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 	}
 
 	std::cout << std::endl;
-	std::cout << num << std::endl;
-	std::cout << first101 << std::endl;
+	std::cout << "count:" << num << std::endl;
+	std::cout << "first:" << first101 << std::endl;
     return 0;
 }
