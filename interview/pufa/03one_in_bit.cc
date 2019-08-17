@@ -11,6 +11,10 @@ int main(int argc, char *argv[])
 	std::cin >> input;
 	std::bitset<sizeof(int)*8> bit(input);
 	std::cout << bit << std::endl;
+
+	/* method 1 */
+	std::cout << "number of one: " << bit.count() << std::endl;
+	/* method 2 */
 	std::string bitstr = bit.to_string();
 	int ones_count = 0;
 	auto ch = bitstr.begin();
